@@ -27,3 +27,6 @@ class Test(commands.Cog):
     
 async def setup(bot):
     await bot.add_cog(Test(bot))
+    
+async def teardown(bot):
+    await bot.remove_cog(Test(bot))
