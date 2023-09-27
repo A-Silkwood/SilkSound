@@ -11,23 +11,23 @@ import os
 import utils as u
 
 
-def log_debug(message):
+def _debug(message):
     u.logger.debug(f": {message}")
 
 
-def log_info(message):
+def _info(message):
     u.logger.info(f": {message}")
 
 
-def log_warning(message):
+def _warning(message):
     u.logger.warning(f": {message}")
 
 
-def log_error(message):
+def _error(message):
     u.logger.error(f": {message}")
 
 
-def log_critical(message):
+def _critical(message):
     u.logger.critical(f": {message}")
 
 
@@ -65,14 +65,14 @@ def main():
     # runs when bot is intialized
     @bot.event
     async def on_ready():
-        log_info(f"We have logged in as {bot.user}")
+        _info(f"We have logged in as {bot.user}")
 
     # load cogs
-    log_info(f"Loading extensions")
+    _info(f"Loading extensions")
     for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
         if filename.endswith(".py"):
             asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
-            log_info(f"Loaded {filename[0:-3]}")
+            _info(f"Loaded {filename[0:-3]}")
 
     # run bot
     bot.run(u.config.get("BOT_TOKEN"), log_handler=None)

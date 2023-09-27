@@ -5,28 +5,13 @@ import logging.handlers
 
 import os
 
-import utils as u
+from cog import Cog
 
 
-class BotManagement(commands.Cog):
+class Admin(Cog):
     def __init__(self, bot):
-        self.bot = bot
-        self.name = "bot_management"
-    
-    def log_debug(self, message):
-        u.logger.debug(f'.{self.name}: {message}')
-
-    def log_info(self, message):
-        u.logger.info(f'.{self.name}: {message}')
-
-    def log_warning(self, message):
-        u.logger.warning(f'.{self.name}: {message}')
-
-    def log_error(self, message):
-        u.logger.error(f'.{self.name}: {message}')
-
-    def log_critical(self, message):
-        u.logger.critical(f'.{self.name}: {message}')
+        super().__init__(bot)
+        self.name = "admin"
 
     # reload all cogs
     @commands.command()
@@ -47,8 +32,8 @@ class BotManagement(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(BotManagement(bot))
+    await bot.add_cog(Admin(bot))
 
 
 async def teardown(bot):
-    await bot.remove_cog(BotManagement(bot))
+    await bot.remove_cog(Admin(bot))

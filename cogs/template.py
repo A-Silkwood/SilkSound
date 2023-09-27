@@ -5,28 +5,13 @@ import logging.handlers
 
 import os
 
-import utils as u
+from cog import Cog
 
 
-class Template(commands.Cog):
+class Template(Cog):
     def __init__(self, bot):
-        self.bot = bot
+        super().__init__(bot)
         self.name = "template"
-    
-    def log_debug(self, message):
-        u.logger.debug(f'.{self.name}: {message}')
-
-    def log_info(self, message):
-        u.logger.info(f'.{self.name}: {message}')
-
-    def log_warning(self, message):
-        u.logger.warning(f'.{self.name}: {message}')
-
-    def log_error(self, message):
-        u.logger.error(f'.{self.name}: {message}')
-
-    def log_critical(self, message):
-        u.logger.critical(f'.{self.name}: {message}')
 
     # command with 3 positional arguments
     @commands.command()
