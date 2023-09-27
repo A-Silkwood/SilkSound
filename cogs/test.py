@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from main import logger
+
 class Test(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

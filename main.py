@@ -8,12 +8,14 @@ from dotenv import dotenv_values
 import os
 
 
+logger = logging.getLogger("discord")
+
+
 def main():
     # load config
     config = dotenv_values(".env")
 
     # initialize logger
-    logger = logging.getLogger("discord")
     logger.setLevel(logging.DEBUG if config.get("ENV") else logging.INFO)
     if not os.path.exists("logs"):
         os.mkdir("logs")
@@ -41,11 +43,11 @@ def main():
         print(f"We have logged in as {bot.user}")
 
     # load cogs
-    print("Loading extensions")
+    logger.info(f"Loading extensions")
     for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
         if filename.endswith(".py"):
             asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
-            print(f"Loaded '{filename[0:-3]}'")
+            logger.info(f"Loaded '{filename[0:-3]}'")
 
     # run bot
     bot.run(config.get("BOT_TOKEN"), log_handler=None)
