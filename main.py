@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 import logging
@@ -32,26 +33,22 @@ def main():
     # initialize bot
     intents = discord.Intents.default()
     intents.message_content = True
-    client = commands.Bot(command_prefix="!", intents= intents)
-    
-    @client.event
+    bot = commands.Bot(command_prefix="!", intents=intents)
+
+    # runs when bot is intialized
+    @bot.event
     async def on_ready():
-        print(f"We have logged in as {client.user}")
-        
-    @client.command()
-    async def basic(ctx):
-        await ctx.send("test")
-    
-    @client.command()
-    async def positional(ctx, arg1, arg2, arg3):
-        await ctx.send(f"{arg1} {arg2} {arg3}")
-        
-    @client.command()
-    async def variable(ctx, *args):
-        await ctx.send(args)
+        print(f"We have logged in as {bot.user}")
+
+    # load cogs
+    print("Loading extensions")
+    for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
+        if filename.endswith(".py"):
+            asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
+            print(f"Loaded '{filename[0:-3]}'")
 
     # run bot
-    client.run(config.get("BOT_TOKEN"), log_handler=None)
+    bot.run(config.get("BOT_TOKEN"), log_handler=None)
 
 
 if __name__ == "__main__":
