@@ -32,4 +32,4 @@ def init_logger():
     logger.setLevel(logging.DEBUG if config.get("ENV") == "dev" else logging.INFO)
     logger.addHandler(handler)
     
-    logger.info("Started bot")
+    logger.info(": Started bot")

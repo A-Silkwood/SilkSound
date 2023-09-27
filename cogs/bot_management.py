@@ -36,13 +36,13 @@ class BotManagement(commands.Cog):
         for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
             if filename.endswith(".py"):
                 await self.bot.reload_extension(f"cogs.{filename[0:-3]}")
-                self.logger.info(f"Loaded {filename[0:-3]}")
+                self.log_info(f"Loaded {filename[0:-3]}")
 
     # close bot
     @commands.command()
     @commands.is_owner()
     async def quit(self, ctx):
-        self.logger.warn("Closing due to owner command")
+        self.log_warning("Closing due to owner command")
         await self.bot.close()
 
 
