@@ -8,9 +8,25 @@ import os
 import utils as u
 
 
-class Test(commands.Cog):
+class Template(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.name = "template"
+    
+    def log_debug(self, message):
+        u.logger.debug(f'.{self.name}: {message}')
+
+    def log_info(self, message):
+        u.logger.info(f'.{self.name}: {message}')
+
+    def log_warning(self, message):
+        u.logger.warning(f'.{self.name}: {message}')
+
+    def log_error(self, message):
+        u.logger.error(f'.{self.name}: {message}')
+
+    def log_critical(self, message):
+        u.logger.critical(f'.{self.name}: {message}')
 
     # command with 3 positional arguments
     @commands.command()
@@ -34,8 +50,8 @@ class Test(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Test(bot))
+    await bot.add_cog(Template(bot))
 
 
 async def teardown(bot):
-    await bot.remove_cog(Test(bot))
+    await bot.remove_cog(Template(bot))
