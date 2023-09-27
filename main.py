@@ -1,7 +1,9 @@
 import discord
-from dotenv import dotenv_values
+from discord.ext import commands
 import logging
 import logging.handlers
+
+from dotenv import dotenv_values
 import os
 
 
@@ -11,7 +13,7 @@ def main():
 
     # initialize logger
     logger = logging.getLogger("discord")
-    logger.setLevel(logging.DEBUG if config.get("ENVIRONMENT") else logging.INFO)
+    logger.setLevel(logging.DEBUG if config.get("ENV") else logging.INFO)
     if not os.path.exists("logs"):
         os.mkdir("logs")
     handler = logging.handlers.RotatingFileHandler(
@@ -30,12 +32,31 @@ def main():
     # initialize bot
     intents = discord.Intents.default()
     intents.message_content = True
-    client = discord.Client(intents=intents)
-
-    # runs when bot is started
+    client = commands.Bot(command_prefix="!", intents= intents)
+    
     @client.event
     async def on_ready():
         print(f"We have logged in as {client.user}")
+        
+    @client.command()
+    async def basic(ctx):
+        await ctx.send("test")   
+        
+    @client.command()
+    async def positional(ctx, arg1):
+        await ctx.send(f"{arg1}")    
+    
+    @client.command()
+    async def positional(ctx, arg1, arg2):
+        await ctx.send(f"{arg1} {arg2}")
+    
+    @client.command()
+    async def positional(ctx, arg1, arg2, arg3):
+        await ctx.send(f"{arg1} {arg2} {arg3}")
+        
+    @client.command()
+    async def variable(ctx, *args):
+        await ctx.send(args)
 
     # run bot
     client.run(config.get("BOT_TOKEN"), log_handler=None)
