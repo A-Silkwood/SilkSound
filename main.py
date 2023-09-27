@@ -40,15 +40,7 @@ def main():
         
     @client.command()
     async def basic(ctx):
-        await ctx.send("test")   
-        
-    @client.command()
-    async def positional(ctx, arg1):
-        await ctx.send(f"{arg1}")    
-    
-    @client.command()
-    async def positional(ctx, arg1, arg2):
-        await ctx.send(f"{arg1} {arg2}")
+        await ctx.send("test")
     
     @client.command()
     async def positional(ctx, arg1, arg2, arg3):
