@@ -1,6 +1,7 @@
 import discord
 from dotenv import dotenv_values
 import logging
+import logging.handlers
 import os
 
 
@@ -8,11 +9,9 @@ def main():
     # load config
     config = dotenv_values(".env")
 
-    # initalize logger
-    logger = logging.getLogger("discord").setLevel(
-        logging.DEBUG if config.get("ENVIRONMENT") == "dev" else logging.INFO
-    )
-    # initalize logger handler
+    # initialize logger
+    logger = logging.getLogger("discord")
+    logger.setLevel(logging.DEBUG if config.get("ENVIRONMENT") else logging.INFO)
     if not os.path.exists("logs"):
         os.mkdir("logs")
     handler = logging.handlers.RotatingFileHandler(
@@ -48,7 +47,7 @@ def main():
             await message.channel.send("Hello!")
 
     # run bot
-    client.run(config.get("BOT_TOKEN"), log_handler=handler)
+    client.run(config.get("BOT_TOKEN"), log_handler=None)
 
 
 if __name__ == "__main__":
