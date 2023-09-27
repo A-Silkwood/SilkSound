@@ -11,14 +11,34 @@ import os
 import utils as u
 
 
+def log_debug(message):
+    u.logger.debug(f": {message}")
+
+
+def log_info(message):
+    u.logger.info(f": {message}")
+
+
+def log_warning(message):
+    u.logger.warning(f": {message}")
+
+
+def log_error(message):
+    u.logger.error(f": {message}")
+
+
+def log_critical(message):
+    u.logger.critical(f": {message}")
+
+
 # startup bot
 def main():
     u.init_logger()
-    
+
     # check for directory
     if not os.path.exists("logs"):
         os.mkdir("logs")
-    
+
     # initialize discord.py logger
     disc_handler = logging.handlers.RotatingFileHandler(
         filename=os.path.join(os.getcwd(), "logs", "discord.log"),
@@ -45,14 +65,14 @@ def main():
     # runs when bot is intialized
     @bot.event
     async def on_ready():
-        u.logger.info(f"We have logged in as {bot.user}")
+        log_info(f"We have logged in as {bot.user}")
 
     # load cogs
-    u.logger.info(f"Loading extensions")
+    log_info(f"Loading extensions")
     for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
         if filename.endswith(".py"):
             asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
-            u.logger.info(f"Loaded {filename[0:-3]}")
+            log_info(f"Loaded {filename[0:-3]}")
 
     # run bot
     bot.run(u.config.get("BOT_TOKEN"), log_handler=None)
