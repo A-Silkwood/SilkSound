@@ -1,25 +1,26 @@
-import asyncio
 import discord
+import discord.http
 from discord.ext import commands
 import logging
 import logging.handlers
 
+import asyncio
 from dotenv import dotenv_values
 import os
 
+import utils as u
 
-logger = logging.getLogger("discord")
 
-
+# startup bot
 def main():
-    # load config
-    config = dotenv_values(".env")
-
-    # initialize logger
-    logger.setLevel(logging.DEBUG if config.get("ENV") else logging.INFO)
+    u.init_logger()
+    
+    # check for directory
     if not os.path.exists("logs"):
         os.mkdir("logs")
-    handler = logging.handlers.RotatingFileHandler(
+    
+    # initialize discord.py logger
+    disc_handler = logging.handlers.RotatingFileHandler(
         filename=os.path.join(os.getcwd(), "logs", "discord.log"),
         encoding="utf-8",
         maxBytes=32 * 1024 * 1024,  # 32 MiB
@@ -29,8 +30,12 @@ def main():
     formatter = logging.Formatter(
         "[{asctime}] [{levelname:<8}] {name}: {message}", dt_fmt, style="{"
     )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    disc_handler.setFormatter(formatter)
+    disc_logger = logging.getLogger("discord")
+    disc_logger.setLevel(
+        logging.DEBUG if u.config.get("ENV") == "dev" else logging.INFO
+    )
+    disc_logger.addHandler(disc_handler)
 
     # initialize bot
     intents = discord.Intents.default()
@@ -40,18 +45,19 @@ def main():
     # runs when bot is intialized
     @bot.event
     async def on_ready():
-        print(f"We have logged in as {bot.user}")
+        u.logger.info(f"We have logged in as {bot.user}")
 
     # load cogs
-    logger.info(f"Loading extensions")
+    u.logger.info(f"Loading extensions")
     for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
         if filename.endswith(".py"):
             asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
-            logger.info(f"Loaded '{filename[0:-3]}'")
+            u.logger.info(f"Loaded {filename[0:-3]}")
 
     # run bot
-    bot.run(config.get("BOT_TOKEN"), log_handler=None)
+    bot.run(u.config.get("BOT_TOKEN"), log_handler=None)
 
 
 if __name__ == "__main__":
     main()
+    del logging

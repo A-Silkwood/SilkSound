@@ -1,7 +1,12 @@
 import discord
 from discord.ext import commands
+import logging
+import logging.handlers
 
-from main import logger
+import os
+
+import utils as u
+
 
 class Test(commands.Cog):
     def __init__(self, bot):
@@ -26,9 +31,11 @@ class Test(commands.Cog):
     @commands.command()
     async def custom(self, ctx, *, arg):
         await ctx.send(arg)
-    
+
+
 async def setup(bot):
     await bot.add_cog(Test(bot))
-    
+
+
 async def teardown(bot):
     await bot.remove_cog(Test(bot))
