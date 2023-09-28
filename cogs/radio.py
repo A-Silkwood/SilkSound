@@ -13,25 +13,53 @@ class Radio(Cog):
         super().__init__(bot)
         self.name = "radio"
 
-    # command with 3 positional arguments
+    # connect to voice channel
     @commands.command()
-    async def basic(self, ctx):
-        await ctx.send(f"Test")
+    async def join(self, ctx):
+        if ctx.author.voice is not None:
+            voice = await ctx.author.voice.channel.connect()
+            self.log_info(f"Connecting to voice channel - ID: {voice.channel.id}")
+        else:
+            self.log_debug(f"User was not connected to a channel")
 
-    # command with 3 positional arguments
+    # disconnect from voice channel
     @commands.command()
-    async def positional(self, ctx, arg1, arg2, arg3):
-        await ctx.send(f"{arg1} {arg2} {arg3}")
+    async def leave(self, ctx):
+        if ctx.author.voice is not None:
+            clients = self.bot.voice_clients
+            channel = ctx.author.voice.channel
 
-    # command with variable argument count
-    @commands.command()
-    async def variable(self, ctx, *args):
-        await ctx.send(args)
+            # exit channel
+            for client in clients:
+                if channel.id == client.channel.id:
+                    await client.disconnect()
+                    self.log_info(
+                        f"Disconnecting from voice channel - ID: {channel.id}"
+                    )
+                    return
+            self.log_debug(f"Bot was not connected to voice channel - ID: {channel.id}")
+        else:
+            self.log_debug("User was not connected to a channel")
 
-    # command with no argument handling; arg is just the rest of the msg
     @commands.command()
-    async def custom(self, ctx, *, arg):
-        await ctx.send(arg)
+    async def play(self, ctx):
+        if ctx.author.voice is not None:
+            clients = self.bot.voice_clients
+            channel = ctx.author.voice.channel
+
+            # exit channel
+            for client in clients:
+                if channel.id == client.channel.id:
+                    source = await discord.FFmpegOpusAudio.from_probe(
+                        os.path.join("assets", "audio", "josh_rawr.mp3"),
+                        method="fallback",
+                    )
+                    await client.play(source)
+                    self.log_info(f"Playing audio in voice channel - ID: {channel.id}")
+                    return
+            self.log_debug(f"Bot was not connected to voice channel - ID: {channel.id}")
+        else:
+            self.log_debug("User was not connected to a channel")
 
 
 async def setup(bot):
