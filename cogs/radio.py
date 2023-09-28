@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands
-import logging
-import logging.handlers
 
 import os
 
@@ -13,53 +11,78 @@ class Radio(Cog):
         super().__init__(bot)
         self.name = "radio"
 
-    # connect to voice channel
+    # connect to a voice channel
     @commands.command()
     async def join(self, ctx):
+        # check if user is in a voice channel
         if ctx.author.voice is not None:
-            voice = await ctx.author.voice.channel.connect()
-            self.log_info(f"Connecting to voice channel - ID: {voice.channel.id}")
+            try:
+                # try to join voice channel
+                voice = await ctx.author.voice.channel.connect()
+                self.log_info(
+                    f"Joined voice channel: Channel ({voice.channel.id}) User ({ctx.author.id})"
+                )
+            except Exception as e:
+                self.log_debug(
+                    f"Couldn't join voice channel; ErrMsg-[ {e} ] : User ({ctx.author.id})"
+                )
         else:
-            self.log_debug(f"User was not connected to a channel")
+            self.log_debug(
+                f"Couldn't join voice channel; User not in a channel: User({ctx.author.id})"
+            )
 
-    # disconnect from voice channel
+    # disconnect from a voice channel
     @commands.command()
     async def leave(self, ctx):
+        # check if user is in a voice channel
         if ctx.author.voice is not None:
             clients = self.bot.voice_clients
             channel = ctx.author.voice.channel
-
-            # exit channel
+            # find if a voice client matches user's voice channel
             for client in clients:
                 if channel.id == client.channel.id:
+                    # disconnect from the voice channel
                     await client.disconnect()
                     self.log_info(
-                        f"Disconnecting from voice channel - ID: {channel.id}"
+                        f"Left voice channel: Channel ({channel.id}) User ({ctx.author.id})"
                     )
                     return
-            self.log_debug(f"Bot was not connected to voice channel - ID: {channel.id}")
+            self.log_debug(
+                f"Couldn't leave voice channel; Bot not in channel: Channel ({channel.id}) User ({ctx.author.id})"
+            )
         else:
-            self.log_debug("User was not connected to a channel")
+            self.log_debug(
+                f"Couldn't leave voice channel; User not in a channel:  Channel ({channel.id}) User ({ctx.author.id})"
+            )
 
     @commands.command()
-    async def play(self, ctx):
+    async def play(self, ctx, url):
+        # check if user is in a voice channel
         if ctx.author.voice is not None:
             clients = self.bot.voice_clients
             channel = ctx.author.voice.channel
-
-            # exit channel
+            # check if a voice client matches user's voice channel
             for client in clients:
                 if channel.id == client.channel.id:
-                    source = await discord.FFmpegOpusAudio.from_probe(
-                        os.path.join("assets", "audio", "josh_rawr.mp3"),
-                        method="fallback",
+                    
+                    # check if url is valid
+                    # check for video
+                    # download mp3
+                    # encode into OPUS
+                    # play or queue video
+                    # delete mp3
+                    
+                    self.log_info(
+                        f"Playing video: Channel ({channel.id}) URL ({url}) User ({ctx.author.id})"
                     )
-                    await client.play(source)
-                    self.log_info(f"Playing audio in voice channel - ID: {channel.id}")
                     return
-            self.log_debug(f"Bot was not connected to voice channel - ID: {channel.id}")
+            self.log_debug(
+                f"Couldn't play video; Bot not in channel: Channel ({channel.id}) User ({ctx.author.id})"
+            )
         else:
-            self.log_debug("User was not connected to a channel")
+            self.log_debug(
+                f"Couldn't play video; User not in a channel: Channel ({channel.id}) User ({ctx.author.id})"
+            )
 
 
 async def setup(bot):
