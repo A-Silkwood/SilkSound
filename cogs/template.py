@@ -1,9 +1,5 @@
 import discord
 from discord.ext import commands
-import logging
-import logging.handlers
-
-import os
 
 from cog import Cog
 

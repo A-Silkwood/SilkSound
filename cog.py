@@ -1,4 +1,5 @@
 from discord.ext import commands
+from stringcase import titlecase
 
 import utils as u
 
@@ -7,21 +8,32 @@ class Cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def log_debug(self, message):
-        u.logger.debug(f"{f'.{self.name}' if self.name is not None else ''}: {message}")
+    def _fname(self):
+        return f".{self.name}" if self.name is not None else ""
 
-    def log_info(self, message):
-        u.logger.info(f"{f'.{self.name}' if self.name is not None else ''}: {message}")
+    def _fdata(self, data: dict = {}):
+        # no data to format
+        if len(data) == 0:
+            return ""
 
-    def log_warning(self, message):
-        u.logger.warning(
-            f"{f'.{self.name}' if self.name is not None else ''}: {message}"
-        )
+        # add each key pair to string
+        data_str = ": ["
+        for key, val in data.items():
+            data_str = f"{data_str} {titlecase(key)} ({val})"
 
-    def log_error(self, message):
-        u.logger.error(f"{f'.{self.name}' if self.name is not None else ''}: {message}")
+        return data_str + " ]"
 
-    def log_critical(self, message):
-        u.logger.critical(
-            f"{f'.{self.name}' if self.name is not None else ''}: {message}"
-        )
+    def debug(self, msg: str, data: dict = {}):
+        u.logger.debug(f"{self._fname()}: {msg}{self._fdata(data)}")
+
+    def info(self, msg: str, data: dict = {}):
+        u.logger.info(f"{self._fname()}: {msg}{self._fdata(data)}")
+
+    def warning(self, msg: str, data: dict = {}):
+        u.logger.warning(f"{self._fname()}: {msg}{self._fdata(data)}")
+
+    def error(self, msg: str, data: dict = {}):
+        u.logger.error(f"{self._fname()}: {msg}{self._fdata(data)}")
+
+    def critical(self, msg: str, data: dict = {}):
+        u.logger.critical(f"{self._fname()}: {msg}{self._fdata(data)}")

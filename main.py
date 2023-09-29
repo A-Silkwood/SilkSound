@@ -1,43 +1,61 @@
+import asyncio
 import discord
 import discord.http
 from discord.ext import commands
+from dotenv import dotenv_values
 import logging
 import logging.handlers
-
-import asyncio
-from dotenv import dotenv_values
 import os
+from stringcase import titlecase
 
 import utils as u
 
 
-def _debug(message):
-    u.logger.debug(f": {message}")
+def _fdata(data: dict = {}):
+    # no data to format
+    if len(data) == 0:
+        return ""
+
+    # add each key pair to string
+    data_str = ": ["
+    for key, val in data.items():
+        data_str = f"{data_str} {titlecase(key)} ({val})"
+
+    return data_str + " ]"
 
 
-def _info(message):
-    u.logger.info(f": {message}")
+def debug(msg: str, data: dict = {}):
+    u.logger.debug(f": {msg}{_fdata(data)}")
 
 
-def _warning(message):
-    u.logger.warning(f": {message}")
+def info(msg: str, data: dict = {}):
+    u.logger.info(f": {msg}{_fdata(data)}")
 
 
-def _error(message):
-    u.logger.error(f": {message}")
+def warning(msg: str, data: dict = {}):
+    u.logger.warning(f": {msg}{_fdata(data)}")
 
 
-def _critical(message):
-    u.logger.critical(f": {message}")
+def error(msg: str, data: dict = {}):
+    u.logger.error(f": {msg}{_fdata(data)}")
+
+
+def critical(msg: str, data: dict = {}):
+    u.logger.critical(f": {msg}{_fdata(data)}")
 
 
 # startup bot
 def main():
-    u.init_logger()
-
-    # check for directory
+    # check for directories
     if not os.path.exists("logs"):
         os.mkdir("logs")
+    if not os.path.exists("assets"):
+        os.mkdir("assets")
+    if not os.path.exists("assets/audio"):
+        os.mkdir("assets/audio")
+        
+    # create logger
+    u.init_logger()
 
     # initialize discord.py logger
     disc_handler = logging.handlers.RotatingFileHandler(
@@ -65,14 +83,14 @@ def main():
     # runs when bot is intialized
     @bot.event
     async def on_ready():
-        _info(f"We have logged in as {bot.user}")
+        info("Successful login", {"client": bot.user.id})
 
     # load cogs
-    _info(f"Loading extensions")
+    info("Loading extensions")
     for filename in os.listdir(os.path.join(os.getcwd(), "cogs")):
         if filename.endswith(".py"):
             asyncio.run(bot.load_extension(f"cogs.{filename[0:-3]}"))
-            _info(f"Loaded {filename[0:-3]}")
+            info("Loaded extension", {"extension": filename[0:-3]})
 
     # run bot
     bot.run(u.config.get("BOT_TOKEN"), log_handler=None)

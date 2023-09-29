@@ -1,7 +1,6 @@
+from dotenv import dotenv_values
 import logging
 import logging.handlers
-
-from dotenv import dotenv_values
 import os
 
 
@@ -10,7 +9,7 @@ config = dotenv_values(".env")
 
 def init_logger():
     global logger
-    
+
     # check for directory
     if not os.path.exists("logs"):
         os.mkdir("logs")
@@ -27,9 +26,7 @@ def init_logger():
         "[{asctime}] [{levelname:<8}] {name}{message}", dt_fmt, style="{"
     )
     handler.setFormatter(formatter)
-    
-    logger = logging.getLogger(config.get('PROJECT_NAME'))
+
+    logger = logging.getLogger(config.get("PROJECT_NAME"))
     logger.setLevel(logging.DEBUG if config.get("ENV") == "dev" else logging.INFO)
     logger.addHandler(handler)
-    
-    logger.info(": Started bot")
